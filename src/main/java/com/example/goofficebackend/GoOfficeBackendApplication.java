@@ -1,0 +1,13 @@
+package com.example.goofficebackend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GoOfficeBackendApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(GoOfficeBackendApplication.class, args);
+    }
+
+}
