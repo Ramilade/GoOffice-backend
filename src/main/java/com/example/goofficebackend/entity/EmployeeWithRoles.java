@@ -17,8 +17,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "employee_with_roles")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DISCRIMINATOR_TYPE")
 public class EmployeeWithRoles {
 
   @Id
@@ -41,7 +41,13 @@ public class EmployeeWithRoles {
   @CollectionTable(name = "security_role")
   List<Role> roles = new ArrayList<>();
 
-  @OneToOne(mappedBy = "employeeWithRoles", cascade = CascadeType.ALL)
-  private Employee employee;
+  public EmployeeWithRoles(String password, String email){
+    this.password = password;
+    this.email = email;
+  }
+
+  public void addRole(Role role){
+    roles.add(role);
+  }
 
 }

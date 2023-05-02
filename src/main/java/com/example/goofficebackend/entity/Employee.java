@@ -11,16 +11,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "employee")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "USER_TYPE")
 @Entity
-public class Employee {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
-
-  @Column(name = "email", nullable = false, length = 100)
-  private String email;
+public class Employee extends EmployeeWithRoles {
 
   @Column(name = "first_name", nullable = false, length = 50)
   private String firstName;
@@ -37,5 +31,16 @@ public class Employee {
   @OneToOne
   @JoinColumn(name = "email", referencedColumnName = "email")
   private EmployeeWithRoles employeeWithRoles;
+
+  public Employee (String email, String password, String firstName, String lastName, LocalDate birthdate, String dietaries){
+    super(email, password);
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.birthdate = birthdate;
+    this.dietaries = dietaries;
+
+  }
+
+
 
 }

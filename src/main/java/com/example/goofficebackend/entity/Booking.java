@@ -2,16 +2,19 @@ package com.example.goofficebackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "booking")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -32,6 +35,6 @@ public class Booking {
   private LocalDateTime created;
 
   @Column(name = "updated")
-  @CreationTimestamp
+  @UpdateTimestamp
   private LocalDateTime updated;
 }
