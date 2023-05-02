@@ -34,5 +34,8 @@ public class Employee {
   @Column(name = "dietaries")
   private String dietaries;
 
+  @OneToOne
+  @JoinColumn(name = "email", referencedColumnName = "email")
+  private EmployeeWithRoles employeeWithRoles;
 
 }

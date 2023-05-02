@@ -40,4 +40,8 @@ public class EmployeeWithRoles {
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "security_role")
   List<Role> roles = new ArrayList<>();
+
+  @OneToOne(mappedBy = "employeeWithRoles", cascade = CascadeType.ALL)
+  private Employee employee;
+
 }
