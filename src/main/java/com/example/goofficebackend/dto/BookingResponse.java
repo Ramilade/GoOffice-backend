@@ -1,15 +1,14 @@
 package com.example.goofficebackend.dto;
 
 import com.example.goofficebackend.entity.Booking;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -18,20 +17,24 @@ public class BookingResponse {
 
     private int booking_id;
 
-    private LocalDateTime startTime;
+    private LocalDate startDate;
 
-    private LocalDateTime endTime;
+    private LocalTime startTime;
 
-    @CreationTimestamp
+    private LocalDate endDate;
+
+    private LocalTime endTime;
+
     private LocalDateTime created;
 
-    @UpdateTimestamp
     private LocalDateTime updated;
 
     public BookingResponse(Booking b){
         this.booking_id = b.getId();
-        this.startTime = b.getStartTime();
-        this.endTime = b.getEndTime();
+        this.startDate = b.getStartDate();
+        this.startTime = b.getStartTime().truncatedTo(ChronoUnit.MINUTES);
+        this.endDate = b.getEndDate();
+        this.endTime = b.getEndTime().truncatedTo(ChronoUnit.MINUTES);
         this.created = b.getCreated();
         this.updated = b.getUpdated();
     }

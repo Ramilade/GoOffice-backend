@@ -29,11 +29,11 @@ public class Employee extends EmployeeWithRoles {
   private String dietaries;
 
   @OneToOne
-  @JoinColumn(name = "email", referencedColumnName = "email")
+  @JoinColumn(name = "id", referencedColumnName = "id")
   private EmployeeWithRoles employeeWithRoles;
 
-  public Employee (String email, String password, String firstName, String lastName, LocalDate birthdate, String dietaries){
-    super(email, password);
+  public Employee (int id, String email, String password, String firstName, String lastName, LocalDate birthdate, String dietaries){
+    super(id, email, password);
     this.firstName = firstName;
     this.lastName = lastName;
     this.birthdate = birthdate;

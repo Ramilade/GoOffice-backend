@@ -21,33 +21,37 @@ import java.util.List;
 @DiscriminatorColumn(name = "DISCRIMINATOR_TYPE")
 public class EmployeeWithRoles {
 
-  @Id
-  @Column(nullable = false,length = 50,unique = true)
-  String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-  //60 = length of a bcrypt encoded password
-  @Column(nullable = false, length = 60)
-  String password;
+    @Column(nullable = false, length = 50, unique = true)
+    String email;
 
-  @CreationTimestamp
-  private LocalDateTime created;
+    //60 = length of a bcrypt encoded password
+    @Column(nullable = false, length = 60)
+    String password;
 
-  @UpdateTimestamp
-  private LocalDateTime edited;
+    @CreationTimestamp
+    private LocalDateTime created;
 
-  @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "ENUM('USER','ADMIN')")
-  @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "security_role")
-  List<Role> roles = new ArrayList<>();
+    @UpdateTimestamp
+    private LocalDateTime edited;
 
-  public EmployeeWithRoles(String password, String email){
-    this.password = password;
-    this.email = email;
-  }
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('USER','ADMIN')")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "security_role")
+    List<Role> roles = new ArrayList<>();
 
-  public void addRole(Role role){
-    roles.add(role);
-  }
+    public EmployeeWithRoles(int id, String password, String email) {
+        this.id = id;
+        this.password = password;
+        this.email = email;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
 
 }

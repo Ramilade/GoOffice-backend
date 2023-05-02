@@ -1,5 +1,7 @@
 package com.example.goofficebackend.entity;
 
+import com.example.goofficebackend.entity.Desk;
+import com.example.goofficebackend.entity.Employee;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +11,9 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -24,11 +28,17 @@ public class Booking {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Column(name = "start_date")
+  private LocalDate startDate;
+
   @Column(name = "start_time")
-  private LocalDateTime startTime;
+  private LocalTime startTime;
+
+  @Column(name = "end_date")
+  private LocalDate endDate;
 
   @Column(name = "end_time")
-  private LocalDateTime endTime;
+  private LocalTime endTime;
 
   @Column(name = "created")
   @CreationTimestamp
@@ -37,4 +47,12 @@ public class Booking {
   @Column(name = "updated")
   @UpdateTimestamp
   private LocalDateTime updated;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "desk_id")
+  private Desk desk;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "employee_id")
+  private Employee employee;
 }
