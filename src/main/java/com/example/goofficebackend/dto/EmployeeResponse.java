@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmployeeResponse {
 
-    private int id;
     private String email;
     private String firstName;
     private String lastName;
@@ -23,7 +22,6 @@ public class EmployeeResponse {
     private String dietaries;
 
         public EmployeeResponse(Employee e){
-        this.id = e.getId();
         this.email = e.getEmail();
         this.firstName = e.getFirstName();
         this.lastName = e.getLastName();

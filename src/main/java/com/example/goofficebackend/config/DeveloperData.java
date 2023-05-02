@@ -2,6 +2,7 @@ package com.example.goofficebackend.config;
 
 import com.example.goofficebackend.entity.Desk;
 import com.example.goofficebackend.entity.Employee;
+import com.example.goofficebackend.entity.Role;
 import com.example.goofficebackend.repository.DeskRepository;
 import com.example.goofficebackend.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,10 @@ public class DeveloperData implements ApplicationRunner {
         employee1.setFirstName("John");
         employee1.setLastName("Doe");
         employee1.setBirthdate(LocalDate.now());
+        employee1.setPassword("1234");
+        employee1.addRole(Role.ADMIN);
         employeeRepository.save(employee1);
+
 
         createDesks();
 
