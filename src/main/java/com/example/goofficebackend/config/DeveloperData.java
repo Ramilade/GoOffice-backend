@@ -1,16 +1,22 @@
 package com.example.goofficebackend.config;
 
+import com.example.goofficebackend.entity.Booking;
 import com.example.goofficebackend.entity.Desk;
 import com.example.goofficebackend.entity.Employee;
 import com.example.goofficebackend.entity.Role;
+import com.example.goofficebackend.repository.BookingRepository;
 import com.example.goofficebackend.repository.DeskRepository;
 import com.example.goofficebackend.repository.EmployeeRepository;
+import jakarta.persistence.Column;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Configuration
 public class DeveloperData implements ApplicationRunner {
@@ -20,6 +26,9 @@ public class DeveloperData implements ApplicationRunner {
 
     @Autowired
     DeskRepository deskRepository;
+
+    @Autowired
+    BookingRepository bookingRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -35,6 +44,17 @@ public class DeveloperData implements ApplicationRunner {
 
 
         createDesks();
+        createBooking();
+
+    }
+
+    private void createBooking() {
+        Booking booking = new Booking();
+        booking.setStartTime(LocalDateTime.now());
+        booking.setEndTime(LocalDateTime.now().plusHours(2));
+        booking.setCreated(LocalDateTime.now());
+        booking.setUpdated(LocalDateTime.now());
+        bookingRepository.save(booking);
 
     }
 
