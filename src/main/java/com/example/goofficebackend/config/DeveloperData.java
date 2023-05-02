@@ -1,15 +1,10 @@
 package com.example.goofficebackend.config;
 
-import com.example.goofficebackend.entity.Booking;
-import com.example.goofficebackend.entity.Desk;
-import com.example.goofficebackend.entity.Employee;
-import com.example.goofficebackend.entity.Role;
+import com.example.goofficebackend.entity.*;
 import com.example.goofficebackend.repository.BookingRepository;
+import com.example.goofficebackend.repository.DepartmentRepository;
 import com.example.goofficebackend.repository.DeskRepository;
 import com.example.goofficebackend.repository.EmployeeRepository;
-import jakarta.persistence.Column;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -17,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 @Configuration
 public class DeveloperData implements ApplicationRunner {
@@ -29,6 +26,9 @@ public class DeveloperData implements ApplicationRunner {
 
     @Autowired
     BookingRepository bookingRepository;
+
+    @Autowired
+    DepartmentRepository departmentRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -44,16 +44,35 @@ public class DeveloperData implements ApplicationRunner {
 
 
         createDesks();
+        createDepartments();
         createBooking();
 
     }
 
+    private void createDepartments() {
+        Department annotators = new Department();
+        annotators.setName("Annotator Team");
+        Department machineLearning = new Department();
+        machineLearning.setName("Machine Learning Team");
+        Department platform = new Department();
+        platform.setName("Platform Team");
+        Department sales = new Department();
+        sales.setName("Sales Team");
+        departmentRepository.save(annotators);
+        departmentRepository.save(machineLearning);
+        departmentRepository.save(platform);
+        departmentRepository.save(sales);
+    }
+
     private void createBooking() {
         Booking booking = new Booking();
-        booking.setStartTime(LocalDateTime.now());
-        booking.setEndTime(LocalDateTime.now().plusHours(2));
-        booking.setCreated(LocalDateTime.now());
-        booking.setUpdated(LocalDateTime.now());
+        booking.setStartDate(LocalDate.now());
+        booking.setStartTime(LocalTime.now().truncatedTo(ChronoUnit.MINUTES));
+        booking.setEndDate(LocalDate.now().plusDays(1));
+        booking.setEndTime(LocalTime.now().plusHours(2).truncatedTo(ChronoUnit.MINUTES));
+        booking.setDesk(deskRepository.findById(1).orElse(null));
+        booking.setEmployee(employeeRepository.findById(1).orElse(null));
+
         bookingRepository.save(booking);
 
     }
