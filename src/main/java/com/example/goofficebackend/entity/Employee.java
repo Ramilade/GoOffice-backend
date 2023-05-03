@@ -34,8 +34,8 @@ public class Employee extends EmployeeWithRoles {
   @JsonBackReference
   private EmployeeWithRoles employeeWithRoles;
 
-  public Employee (int id, String email, String password, String firstName, String lastName, LocalDate birthdate, String dietaries){
-    super(id, email, password);
+  public Employee (int id, String email, String firstName, String lastName, LocalDate birthdate, String dietaries){
+    super(id, email);
     this.firstName = firstName;
     this.lastName = lastName;
     this.birthdate = birthdate;

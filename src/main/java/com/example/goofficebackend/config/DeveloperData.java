@@ -39,7 +39,6 @@ public class DeveloperData implements ApplicationRunner {
         employee1.setFirstName("John");
         employee1.setLastName("Doe");
         employee1.setBirthdate(LocalDate.now());
-        employee1.setPassword("1234");
         employee1.addRole(Role.ADMIN);
         employeeRepository.save(employee1);
 
