@@ -20,6 +20,12 @@ public class BookingRequest {
     private LocalDateTime updated;
     private int employeeId;
 
+    public BookingRequest(LocalDateTime shiftStart, LocalDateTime shiftEnd, int employeeId) {
+        this.shiftStart = shiftStart;
+        this.shiftEnd = shiftEnd;
+        this.employeeId = employeeId;
+    }
+
     public BookingRequest(Booking b){
         this.shiftStart = b.getShiftStart();
         this.shiftEnd = b.getShiftEnd();
