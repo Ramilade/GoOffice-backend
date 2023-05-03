@@ -1,5 +1,6 @@
 package com.example.goofficebackend.service;
 
+import com.example.goofficebackend.dto.BookingRequest;
 import com.example.goofficebackend.dto.BookingResponse;
 import com.example.goofficebackend.entity.Booking;
 import com.example.goofficebackend.entity.Desk;
@@ -8,12 +9,15 @@ import com.example.goofficebackend.repository.BookingRepository;
 import com.example.goofficebackend.repository.DeskRepository;
 import com.example.goofficebackend.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -32,22 +36,14 @@ public class BookingService {
 
     }
 
-    public Booking createBooking(int deskId, int employeeId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        // Retrieve the desk and employee from the database
-        Desk desk = deskRepository.findById(deskId).orElse(null);
-        Employee employee = employeeRepository.findById(employeeId).orElse(null);
+    public Booking createBooking(BookingRequest b) {
 
-        if (desk == null || employee == null) {
-            throw new IllegalArgumentException("Invalid desk or employee ID");
-        }
+        Employee employee = employeeRepository.findById(b.getEmployeeId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"No employee with this ID"));
 
         // Create a new booking object
         Booking booking = new Booking();
-        booking.setStartDate(startDate);
-        booking.setStartTime(startTime);
-        booking.setEndTime(endTime);
-        booking.setEndDate(endDate);
-        booking.setDesk(desk);
+        booking.setShiftStart(b.getShiftStart());
+        booking.setShiftEnd(b.getShiftEnd());
         booking.setEmployee(employee);
 
         // Save the booking in the database

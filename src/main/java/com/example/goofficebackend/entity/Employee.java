@@ -1,5 +1,6 @@
 package com.example.goofficebackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Employee extends EmployeeWithRoles {
 
   @OneToOne
   @JoinColumn(name = "id", referencedColumnName = "id")
+  @JsonBackReference
   private EmployeeWithRoles employeeWithRoles;
 
   public Employee (int id, String email, String password, String firstName, String lastName, LocalDate birthdate, String dietaries){

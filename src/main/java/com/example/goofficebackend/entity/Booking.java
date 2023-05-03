@@ -28,17 +28,11 @@ public class Booking {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(name = "start_date")
-  private LocalDate startDate;
+  @Column(name = "shift_start")
+  private LocalDateTime shiftStart;
 
-  @Column(name = "start_time")
-  private LocalTime startTime;
-
-  @Column(name = "end_date")
-  private LocalDate endDate;
-
-  @Column(name = "end_time")
-  private LocalTime endTime;
+  @Column(name = "shift_end")
+  private LocalDateTime shiftEnd;
 
   @Column(name = "created")
   @CreationTimestamp

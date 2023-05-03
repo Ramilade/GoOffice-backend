@@ -1,5 +1,6 @@
 package com.example.goofficebackend.api;
 
+import com.example.goofficebackend.dto.BookingRequest;
 import com.example.goofficebackend.dto.BookingResponse;
 import com.example.goofficebackend.entity.Booking;
 import com.example.goofficebackend.service.BookingService;
@@ -25,14 +26,10 @@ public class BookingController {
         return bookingService.getBookings();
     }
 
-    @PostMapping("/create/{deskId}/{employeeId}/{startTime}/{endTime}")
-    public BookingResponse createBooking(@PathVariable("deskId") int deskId,
-                                         @PathVariable("employeeId") int employeeId,
-                                         @PathVariable("startDate") LocalDate startDate,
-                                         @PathVariable("startTime") LocalTime startTime,
-                                         @PathVariable("endDate") LocalDate endDate,
-                                         @PathVariable("endTime") LocalTime endTime) {
-        Booking booking = bookingService.createBooking(deskId, employeeId, startDate, startTime, endDate, endTime);
+    @PostMapping("/create")
+    public BookingResponse createBooking(@RequestBody BookingRequest bookingRequest) {
+
+        Booking booking = bookingService.createBooking(bookingRequest);
 
         return new BookingResponse(booking);
     }

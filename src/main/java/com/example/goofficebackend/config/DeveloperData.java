@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Configuration
 public class DeveloperData implements ApplicationRunner {
@@ -43,13 +44,13 @@ public class DeveloperData implements ApplicationRunner {
         employeeRepository.save(employee1);
 
 
-        createDesks();
-        createDepartments();
+        List<Department> departmentList = createDepartments();
+        List<Desk> deskList = createDesks(departmentList);
         createBooking();
 
     }
 
-    private void createDepartments() {
+    private List<Department> createDepartments() {
         Department annotators = new Department();
         annotators.setName("Annotator Team");
         Department machineLearning = new Department();
@@ -62,23 +63,18 @@ public class DeveloperData implements ApplicationRunner {
         departmentRepository.save(machineLearning);
         departmentRepository.save(platform);
         departmentRepository.save(sales);
+
+        return departmentRepository.findAll();
     }
 
     private void createBooking() {
-        Booking booking = new Booking();
-        booking.setStartDate(LocalDate.now());
-        booking.setStartTime(LocalTime.now().truncatedTo(ChronoUnit.MINUTES));
-        booking.setEndDate(LocalDate.now().plusDays(1));
-        booking.setEndTime(LocalTime.now().plusHours(2).truncatedTo(ChronoUnit.MINUTES));
-        booking.setDesk(deskRepository.findById(1).orElse(null));
-        booking.setEmployee(employeeRepository.findById(1).orElse(null));
-
-        bookingRepository.save(booking);
 
     }
 
-    public void createDesks(){
+    public List<Desk> createDesks(List<Department> departmentList){
+
         Desk desk1 = new Desk();
+        desk1.setDepartment(departmentList.get(1));
         Desk desk2 = new Desk();
         Desk desk3 = new Desk();
         Desk desk4 = new Desk();
@@ -94,6 +90,7 @@ public class DeveloperData implements ApplicationRunner {
         deskRepository.save(desk6);
         deskRepository.save(desk7);
 
+        return deskRepository.findAll();
     }
 
 

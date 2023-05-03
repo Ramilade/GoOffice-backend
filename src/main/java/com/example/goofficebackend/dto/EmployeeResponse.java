@@ -1,6 +1,7 @@
 package com.example.goofficebackend.dto;
 
 import com.example.goofficebackend.entity.Employee;
+import com.example.goofficebackend.entity.EmployeeWithRoles;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,18 +16,19 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmployeeResponse {
 
+    private int employeeId;
     private String email;
     private String firstName;
     private String lastName;
     private LocalDate birthdate;
     private String dietaries;
 
-        public EmployeeResponse(Employee e){
-        this.email = e.getEmail();
+    public EmployeeResponse(Employee e) {
+        this.employeeId = e.getEmployeeWithRoles().getId();
+        this.email =  e.getEmail();
         this.firstName = e.getFirstName();
         this.lastName = e.getLastName();
         this.birthdate = e.getBirthdate();
         this.dietaries = e.getDietaries();
     }
-
 }
