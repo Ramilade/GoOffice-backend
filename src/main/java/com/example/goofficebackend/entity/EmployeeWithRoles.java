@@ -28,9 +28,9 @@ public class EmployeeWithRoles {
     @Column(nullable = false, length = 50, unique = true)
     String email;
 
-    //60 = length of a bcrypt encoded password
+/*    //60 = length of a bcrypt encoded password
     @Column(nullable = false, length = 60)
-    String password;
+    String password;*/
 
     @CreationTimestamp
     private LocalDateTime created;
@@ -44,9 +44,8 @@ public class EmployeeWithRoles {
     @CollectionTable(name = "security_role")
     List<Role> roles = new ArrayList<>();
 
-    public EmployeeWithRoles(int id, String password, String email) {
+    public EmployeeWithRoles(int id, String email) {
         this.id = id;
-        this.password = password;
         this.email = email;
     }
 

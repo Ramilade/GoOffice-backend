@@ -24,7 +24,7 @@ public class EmployeeResponse {
     private String dietaries;
 
     public EmployeeResponse(Employee e) {
-        this.employeeId = e.getEmployeeWithRoles().getId();
+        this.employeeId = e.getId();
         this.email =  e.getEmail();
         this.firstName = e.getFirstName();
         this.lastName = e.getLastName();
