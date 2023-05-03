@@ -10,10 +10,13 @@ import com.example.goofficebackend.repository.DeskRepository;
 import com.example.goofficebackend.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -30,46 +33,63 @@ public class BookingService {
         this.employeeRepository = employeeRepository;
     }
 
-
-    public List<BookingResponse> getBookings() {
+    
+    public ResponseEntity<List<BookingResponse>> getBookings() {
         List<Booking> bookings = bookingRepository.findAll();
-
-        return bookings.stream().map(b -> new BookingResponse(b)).toList();
-
+        List<BookingResponse> bookingResponses = bookings.stream()
+                .map(BookingResponse::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(bookingResponses);
     }
 
-    public Booking createBooking(BookingRequest b) {
+    public void validateDate(LocalDateTime shiftStart, LocalDateTime shiftEnd) {
+        // check that the date is the same
+        if (!shiftStart.toLocalDate().isEqual(shiftEnd.toLocalDate())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start and end date is not the same");
+        }
+        // check if startdate or enddate is not before present
+        if (shiftStart.isBefore(LocalDateTime.now()) || shiftEnd.isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is before present");
+        }
+        // check if enddate is more than 4 weeks in the future
+        if (shiftEnd.isAfter(LocalDateTime.now().plusWeeks(4))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is more than 4 weeks in the future");
+        }
+    }
+
+    public ResponseEntity<BookingResponse> createBooking(BookingRequest b) {
 
         Employee employee = employeeRepository.findById(b.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
 
-        // Create a new booking object
         Booking booking = new Booking();
+
+        validateDate(b.getShiftStart(), b.getShiftEnd());
+
         booking.setShiftStart(b.getShiftStart());
         booking.setShiftEnd(b.getShiftEnd());
         booking.setEmployee(employee);
-
-        // Save the booking in the database
-        return bookingRepository.save(booking);
+        bookingRepository.save(booking);
+        BookingResponse bookingResponse = new BookingResponse(booking);
+        return ResponseEntity.ok().body(bookingResponse);
     }
 
-    public Booking updateBooking(int id, BookingRequest bookingRequest) {
+    public ResponseEntity<BookingResponse> updateBooking(int id, BookingRequest bookingRequest) {
 
-        // Find the booking in the database
         Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No booking with this ID"));
 
-        // Update the booking object
+        validateDate(bookingRequest.getShiftStart(), bookingRequest.getShiftEnd());
+
         booking.setShiftStart(bookingRequest.getShiftStart());
         booking.setShiftEnd(bookingRequest.getShiftEnd());
 
-        // Save the booking in the database
-        return bookingRepository.save(booking);
+        bookingRepository.save(booking);
+        BookingResponse bookingResponse = new BookingResponse(booking);
+        return ResponseEntity.ok().body(bookingResponse);
     }
 
-    public void deleteBooking(int id) {
-        // Find the booking in the database
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No booking with this ID"));
-
-        // Delete the booking from the database
+    public ResponseEntity<String> deleteBooking(int id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No booking with this ID"));
         bookingRepository.delete(booking);
+        return ResponseEntity.ok().body("Booking deleted");
     }
 }
