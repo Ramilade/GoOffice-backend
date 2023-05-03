@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "desk")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Desk {
   @Id
@@ -24,7 +24,7 @@ public class Desk {
   @JoinColumn(name = "department_id")
   private Department department;
 
-  @OneToOne(mappedBy = "desk", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-  private Booking booking;
+  @OneToMany(mappedBy = "desk", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<Booking> bookingList;
 
 }

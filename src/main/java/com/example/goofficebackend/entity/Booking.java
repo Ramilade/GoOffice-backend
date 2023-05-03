@@ -20,7 +20,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "booking")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Booking {
 
@@ -42,7 +42,7 @@ public class Booking {
   @UpdateTimestamp
   private LocalDateTime updated;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "desk_id")
   private Desk desk;
 
