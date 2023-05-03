@@ -33,4 +33,19 @@ public class BookingController {
 
         return new BookingResponse(booking);
     }
+
+    @PutMapping("/update/{id}")
+    public BookingResponse updateBooking(@PathVariable int id, @RequestBody BookingRequest bookingRequest) {
+
+        Booking booking = bookingService.updateBooking(id, bookingRequest);
+
+        return new BookingResponse(booking);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteBooking(@PathVariable int id) {
+
+        bookingService.deleteBooking(id);
+    }
+
 }
