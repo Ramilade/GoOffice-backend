@@ -74,13 +74,20 @@ public class DeveloperData implements ApplicationRunner {
     public List<Desk> createDesks(List<Department> departmentList){
 
         Desk desk1 = new Desk();
-        desk1.setDepartment(departmentList.get(1));
         Desk desk2 = new Desk();
         Desk desk3 = new Desk();
         Desk desk4 = new Desk();
         Desk desk5 = new Desk();
         Desk desk6 = new Desk();
         Desk desk7 = new Desk();
+
+        desk1.setDepartment(departmentList.get(0));
+        desk2.setDepartment(departmentList.get(0));
+        desk3.setDepartment(departmentList.get(0));
+        desk4.setDepartment(departmentList.get(0));
+        desk5.setDepartment(departmentList.get(0));
+        desk6.setDepartment(departmentList.get(0));
+        desk7.setDepartment(departmentList.get(0));
 
         deskRepository.save(desk1);
         deskRepository.save(desk2);

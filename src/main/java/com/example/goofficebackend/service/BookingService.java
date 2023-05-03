@@ -3,6 +3,7 @@ package com.example.goofficebackend.service;
 import com.example.goofficebackend.dto.BookingRequest;
 import com.example.goofficebackend.dto.BookingResponse;
 import com.example.goofficebackend.entity.Booking;
+import com.example.goofficebackend.entity.Desk;
 import com.example.goofficebackend.entity.Employee;
 import com.example.goofficebackend.repository.BookingRepository;
 import com.example.goofficebackend.repository.DepartmentRepository;
@@ -59,15 +60,21 @@ public class BookingService {
 
     public ResponseEntity<BookingResponse> createBooking(BookingRequest b) {
 
+
         Employee employee = employeeRepository.findById(b.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
 
         Booking booking = new Booking();
+
+        Desk availableDesk = deskRepository.findAvailableDesk(b.getShiftStart(), b.getShiftEnd())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
 
         validateDate(b.getShiftStart(), b.getShiftEnd());
 
         booking.setShiftStart(b.getShiftStart());
         booking.setShiftEnd(b.getShiftEnd());
         booking.setEmployee(employee);
+        booking.setDesk(availableDesk);
+
         bookingRepository.save(booking);
         BookingResponse bookingResponse = new BookingResponse(booking);
         return ResponseEntity.ok().body(bookingResponse);
