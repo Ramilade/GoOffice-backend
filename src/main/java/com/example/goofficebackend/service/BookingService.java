@@ -59,20 +59,20 @@ public class BookingService {
         }
     }
 
-    public ResponseEntity<BookingResponse> createBooking(BookingRequest b) {
+    public ResponseEntity<BookingResponse> createBooking(BookingRequest br) {
 
 
-        Employee employee = employeeRepository.findById(b.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
+        Employee employee = employeeRepository.findById(br.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
 
         Booking booking = new Booking();
 
-        Desk availableDesk = deskRepository.findAvailableDesk(b.getShiftStart(), b.getShiftEnd())
+        Desk availableDesk = deskRepository.findAvailableDesk(br.getShiftStart(), br.getShiftEnd())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
 
-        validateDate(b.getShiftStart(), b.getShiftEnd());
+        validateDate(br.getShiftStart(), br.getShiftEnd());
 
-        booking.setShiftStart(b.getShiftStart());
-        booking.setShiftEnd(b.getShiftEnd());
+        booking.setShiftStart(br.getShiftStart());
+        booking.setShiftEnd(br.getShiftEnd());
         booking.setEmployee(employee);
         booking.setDesk(availableDesk);
 
@@ -81,14 +81,18 @@ public class BookingService {
         return ResponseEntity.ok().body(bookingResponse);
     }
 
-    public ResponseEntity<BookingResponse> updateBooking(int id, BookingRequest bookingRequest) {
+    public ResponseEntity<BookingResponse> updateBooking(int id, BookingRequest br) {
 
         Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No booking with this ID"));
 
-        validateDate(bookingRequest.getShiftStart(), bookingRequest.getShiftEnd());
+        Desk availableDesk = deskRepository.findAvailableDesk(br.getShiftStart(), br.getShiftEnd())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
 
-        booking.setShiftStart(bookingRequest.getShiftStart());
-        booking.setShiftEnd(bookingRequest.getShiftEnd());
+        validateDate(br.getShiftStart(), br.getShiftEnd());
+
+        booking.setShiftStart(br.getShiftStart());
+        booking.setShiftEnd(br.getShiftEnd());
+        booking.setDesk(availableDesk);
 
         bookingRepository.save(booking);
         BookingResponse bookingResponse = new BookingResponse(booking);
