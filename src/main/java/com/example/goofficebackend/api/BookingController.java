@@ -49,7 +49,7 @@ public class BookingController {
     }
 
     @GetMapping("/findbookingsbydate/{date}")
-    public List<BookingResponse> findBookingsByDate(@PathVariable LocalDate date) {
+    public ResponseEntity<List<BookingResponse>> findBookingsByDate(@PathVariable LocalDate date) {
 
         return bookingService.findBookingsByDate(date);
     }

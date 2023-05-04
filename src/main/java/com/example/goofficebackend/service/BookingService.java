@@ -105,8 +105,9 @@ public class BookingService {
         return ResponseEntity.ok().body("Booking deleted");
     }
 
-    public List<BookingResponse> findBookingsByDate(LocalDate date) {
+    public ResponseEntity<List<BookingResponse>> findBookingsByDate(LocalDate date) {
         List <Booking> list = bookingRepository.findBookingsByDate(date);
-        return list.stream().map(BookingResponse::new).toList();
+        List <BookingResponse> bookingResponses = list.stream().map(BookingResponse::new).toList();
+        return ResponseEntity.ok().body(bookingResponses);
     }
 }
