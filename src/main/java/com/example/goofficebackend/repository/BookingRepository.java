@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-  @Query(value = "SELECT * FROM booking WHERE DATE(shift_start) = :date", nativeQuery = true)
+  @Query(value = "SELECT * FROM booking WHERE CAST(shift_start AS DATE) = :date", nativeQuery = true)
   List<Booking> findBookingsByDate(@Param("date") LocalDate date);
+
 }
