@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,5 +99,10 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No booking with this ID"));
         bookingRepository.delete(booking);
         return ResponseEntity.ok().body("Booking deleted");
+    }
+
+    public List<BookingResponse> findBookingsByDate(LocalDate date) {
+        List <Booking> list = bookingRepository.findBookingsByDate(date);
+        return list.stream().map(BookingResponse::new).toList();
     }
 }
