@@ -24,7 +24,8 @@ public class Desk {
   @JoinColumn(name = "department_id")
   private Department department;
 
-  @OneToMany(mappedBy = "desk", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+
+  @OneToMany(mappedBy = "desk", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Booking> bookingList;
 
 }

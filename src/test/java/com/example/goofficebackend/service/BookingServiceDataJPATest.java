@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +72,7 @@ public class BookingServiceDataJPATest {
     public void createBookingTest() {
 
         //given
-        LocalDateTime shiftStart = LocalDateTime.now().plusDays(1);
+        LocalDateTime shiftStart = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
         LocalDateTime shiftEnd = shiftStart.plusHours(3);
 
         BookingRequest bookingRequest = new BookingRequest();
@@ -95,7 +96,7 @@ public class BookingServiceDataJPATest {
     public void createBookingFailTest() {
 
         //given
-        LocalDateTime shiftStart = LocalDateTime.now().minusDays(1);
+        LocalDateTime shiftStart = LocalDateTime.now().minusDays(1).withHour(9).withMinute(0);
         LocalDateTime shiftEnd = shiftStart.plusDays(1);
 
         BookingRequest bookingRequest = new BookingRequest();
@@ -115,10 +116,10 @@ public class BookingServiceDataJPATest {
     }
 
     @Test
-    public void createBookingWithNoAvailableDesk() {
+    public void createBookingWithNoAvailableDeskTest() {
         //given
-        LocalDateTime shiftStart = LocalDateTime.of(2023, 5, 5, 10, 0);
-        LocalDateTime shiftEnd = LocalDateTime.of(2023, 5, 5, 17, 0);
+        LocalDateTime shiftStart = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
+        LocalDateTime shiftEnd = shiftStart.plusHours(3);
 
         BookingRequest bookingRequest = new BookingRequest();
         bookingRequest.setEmployeeId(testEmployee.getId());
@@ -131,7 +132,7 @@ public class BookingServiceDataJPATest {
         bookingRequest2.setShiftEnd(shiftEnd);
 
         // when
-        ResponseEntity<?> bookingResponseEntity = bookingService.createBooking(bookingRequest);
+        ResponseEntity<BookingResponse> bookingResponseEntity = bookingService.createBooking(bookingRequest);
 
         // then
         assertThat(bookingResponseEntity.getStatusCodeValue()).isEqualTo(200);
@@ -144,6 +145,36 @@ public class BookingServiceDataJPATest {
         });
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
         assertEquals("No available desk during the specified time period", exception.getReason());
+    }
 
+    @Test
+    public void findBookingsByDateTest() {
+        //given
+        Desk desk1 = new Desk();
+        deskRepository.save(desk1);
+        Desk desk2 = new Desk();
+        deskRepository.save(desk2);
+
+        LocalDateTime shiftStart = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
+        LocalDateTime shiftEnd = shiftStart.plusHours(3);
+
+        BookingRequest bookingRequest1 = new BookingRequest();
+        bookingRequest1.setEmployeeId(testEmployee.getId());
+        bookingRequest1.setShiftStart(shiftStart);
+        bookingRequest1.setShiftEnd(shiftEnd);
+        bookingService.createBooking(bookingRequest1);
+
+        BookingRequest bookingRequest2 = new BookingRequest();
+        bookingRequest2.setEmployeeId(testEmployee.getId());
+        bookingRequest2.setShiftStart(shiftStart);
+        bookingRequest2.setShiftEnd(shiftEnd);
+        bookingService.createBooking(bookingRequest2);
+
+        LocalDate date = LocalDate.now().plusDays(7);
+        System.out.println("Test date: " + date);
+
+        ResponseEntity<List<BookingResponse>> bookingResponses = bookingService.findBookingsByDate(date);
+        assertEquals(2,
+            bookingResponses.getBody().size());
     }
 }

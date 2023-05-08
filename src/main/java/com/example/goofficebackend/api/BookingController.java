@@ -48,4 +48,10 @@ public class BookingController {
         return bookingService.deleteBooking(id);
     }
 
+    @GetMapping("/findbookingsbydate/{date}")
+    public ResponseEntity<List<BookingResponse>> findBookingsByDate(@PathVariable LocalDate date) {
+
+        return bookingService.findBookingsByDate(date);
+    }
+
 }
