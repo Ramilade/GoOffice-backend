@@ -117,8 +117,8 @@ public class BookingServiceDataJPATest {
     @Test
     public void createBookingWithNoAvailableDesk() {
         //given
-        LocalDateTime shiftStart = LocalDateTime.now().plusHours(1);
-        LocalDateTime shiftEnd = LocalDateTime.now().plusHours(3);
+        LocalDateTime shiftStart = LocalDateTime.of(2023, 5, 5, 10, 0);
+        LocalDateTime shiftEnd = LocalDateTime.of(2023, 5, 5, 17, 0);
 
         BookingRequest bookingRequest = new BookingRequest();
         bookingRequest.setEmployeeId(testEmployee.getId());
