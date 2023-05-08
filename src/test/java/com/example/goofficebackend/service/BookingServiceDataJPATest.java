@@ -1,5 +1,6 @@
 package com.example.goofficebackend.service;
 
+import com.example.goofficebackend.dto.BookingResponse;
 import com.example.goofficebackend.entity.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
