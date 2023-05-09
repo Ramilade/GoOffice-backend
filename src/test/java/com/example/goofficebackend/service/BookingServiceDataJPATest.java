@@ -33,9 +33,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingServiceDataJPATest {
 
     @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
     private BookingRepository bookingRepository;
     @Autowired
     private DeskRepository deskRepository;
@@ -56,8 +53,7 @@ public class BookingServiceDataJPATest {
 
     private Employee createUser() {
         Employee employee = new Employee();
-        employee.setFirstName("John");
-        employee.setLastName("Doe");
+        employee.setName("John Doe");
         employee.setEmail("john.doe@example.com");
         employee.setBirthdate(LocalDate.now().minusYears(20));
         employee.addRole(Role.ADMIN);
