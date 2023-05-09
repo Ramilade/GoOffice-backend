@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.goofficebackend.dto.EmployeeRequest.getEmployeeEntity;
 
@@ -16,6 +17,10 @@ public class EmployeeService {
 
     @Autowired
     EmployeeRepository employeeRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
     public List<EmployeeResponse> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
@@ -35,12 +40,13 @@ public class EmployeeService {
     }
 
     public void updateEmployeeFromGoogleAuth(Employee employee, EmployeeRequest employeeRequest) {
-
-        employee.setName(employeeRequest.getName());
-        employee.setEmail(employeeRequest.getEmail());
-        employee.setProfilePic(employeeRequest.getProfilePic());
-        employeeRepository.save(employee);
-
+        if (!Objects.equals(employee.getName(), employeeRequest.getName()) || !Objects.equals(employee.getEmail(), employeeRequest.getEmail()) || !Objects.equals(employee.getProfilePic(), employeeRequest.getProfilePic()))
+        {
+            employee.setName(employeeRequest.getName());
+            employee.setEmail(employeeRequest.getEmail());
+            employee.setProfilePic(employeeRequest.getProfilePic());
+            employeeRepository.save(employee);
+        }
     }
 
 }
