@@ -1,5 +1,6 @@
 package com.example.springsecurityazure.config;
 
+import com.example.goofficebackend.service.EmployeeService;
 import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,12 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    EmployeeService employeeService;
+
+    public SecurityConfig(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -27,7 +34,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2Login -> oauth2Login
                         .loginProcessingUrl("/login/oauth2/code/*") // Add this line
                         .defaultSuccessUrl("http://127.0.0.1:5500", true)
-                        .successHandler(new CustomAuthenticationSuccessHandler())) // Use the custom success handler
+                        .successHandler(new CustomAuthenticationSuccessHandler(employeeService))) // Use the custom success handler
                 .logout(logout -> logout
                         .logoutSuccessHandler((request, response, authentication) -> {
                             // Remove the cookie when logging out

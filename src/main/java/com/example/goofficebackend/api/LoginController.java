@@ -1,5 +1,7 @@
 package com.example.goofficebackend.api;
 
+import com.example.goofficebackend.service.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -15,20 +17,19 @@ import java.util.Map;
 @RestController
 public class LoginController {
 
+    @Autowired
+    LoginService loginService;
 
     @GetMapping("/auth-status")
     public ResponseEntity<Map<String, Object>> authStatus(Authentication authentication) {
-        Map<String, Object> response = new HashMap<>();
-        boolean isAuthenticated = authentication != null && authentication.isAuthenticated();
-        response.put("isAuthenticated", isAuthenticated);
 
-        if (isAuthenticated) {
-            OAuth2User oauth2User = ((OAuth2AuthenticationToken) authentication).getPrincipal();
-            String email = oauth2User.getAttribute("email");
-            response.put("email", email);
-        }
+        return loginService.authStatus(authentication);
+    }
 
-        return ResponseEntity.ok(response);
+    @GetMapping("/user-info")
+    public ResponseEntity<Map<String, String>> userInfo(Authentication authentication) {
+
+        return loginService.userInfo(authentication);
     }
 
 }

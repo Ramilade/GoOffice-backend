@@ -34,13 +34,14 @@ public class DeveloperData implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
+/*
         Employee employee1 = new Employee();
         employee1.setEmail("test@123.dk");
-        employee1.setFirstName("John");
-        employee1.setLastName("Doe");
+        employee1.setName("John Joe");
         employee1.setBirthdate(LocalDate.now());
         employee1.addRole(Role.ADMIN);
         employeeRepository.save(employee1);
+*/
 
 
         List<Department> departmentList = createDepartments();

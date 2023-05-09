@@ -13,17 +13,25 @@ import java.time.LocalDate;
 public class EmployeeRequest {
 
     private String email;
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String profilePic;
     private LocalDate birthdate;
     private String dietaries;
 
     public EmployeeRequest(Employee e){
         this.email = e.getEmail();
-        this.firstName = e.getFirstName();
-        this.lastName = e.getLastName();
+        this.name = e.getName();
         this.birthdate = e.getBirthdate();
         this.dietaries = e.getDietaries();
     }
 
+    public static Employee getEmployeeEntity (EmployeeRequest e){
+        return new Employee(e.email,e.name,e.profilePic);
+    }
+
+    public EmployeeRequest(String email, String name, String profilePic) {
+        this.email = email;
+        this.name = name;
+        this.profilePic = profilePic;
+    }
 }

@@ -18,16 +18,16 @@ public class EmployeeResponse {
 
     private int employeeId;
     private String email;
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String profilePic;
     private LocalDate birthdate;
     private String dietaries;
 
     public EmployeeResponse(Employee e) {
         this.employeeId = e.getId();
         this.email =  e.getEmail();
-        this.firstName = e.getFirstName();
-        this.lastName = e.getLastName();
+        this.name = e.getName();
+        this.profilePic = e.getProfilePic();
         this.birthdate = e.getBirthdate();
         this.dietaries = e.getDietaries();
     }

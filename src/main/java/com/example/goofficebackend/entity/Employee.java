@@ -17,13 +17,13 @@ import java.time.LocalDate;
 @Entity
 public class Employee extends EmployeeWithRoles {
 
-  @Column(name = "first_name", nullable = false, length = 50)
-  private String firstName;
+  @Column(name = "name", length = 150)
+  private String name;
 
-  @Column(name = "last_name", nullable = false, length = 100)
-  private String lastName;
+  @Column(nullable = true)
+  private String profilePic;
 
-  @Column(name = "birth_date", nullable = false)
+  @Column(name = "birth_date")
   private LocalDate birthdate;
 
   @Column(name = "dietaries")
@@ -34,15 +34,19 @@ public class Employee extends EmployeeWithRoles {
   @JsonBackReference
   private EmployeeWithRoles employeeWithRoles;
 
-  public Employee (int id, String email, String firstName, String lastName, LocalDate birthdate, String dietaries){
+  public Employee (int id, String email, String name, LocalDate birthdate, String dietaries){
     super(id, email);
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.name = name;
     this.birthdate = birthdate;
     this.dietaries = dietaries;
 
   }
 
 
-
+  public Employee(String email, String name, String profilePic) {
+    this.email = email;
+    this.name = name;
+    this.profilePic = profilePic;
+    addRole(Role.USER);
+  }
 }

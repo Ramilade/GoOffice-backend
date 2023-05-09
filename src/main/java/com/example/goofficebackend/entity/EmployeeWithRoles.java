@@ -25,12 +25,8 @@ public class EmployeeWithRoles {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(nullable = false, unique = true)
     String email;
-
-/*    //60 = length of a bcrypt encoded password
-    @Column(nullable = false, length = 60)
-    String password;*/
 
     @CreationTimestamp
     private LocalDateTime created;
