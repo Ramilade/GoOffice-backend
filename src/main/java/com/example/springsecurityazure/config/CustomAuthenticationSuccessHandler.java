@@ -5,14 +5,22 @@ import com.example.goofficebackend.dto.EmployeeResponse;
 import com.example.goofficebackend.entity.Employee;
 import com.example.goofficebackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 import java.io.IOException;
 
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -21,6 +29,13 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     public CustomAuthenticationSuccessHandler(EmployeeService employeeService) {
         this.employeeService = employeeService;
+    }
+
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    @Override
+    protected RedirectStrategy getRedirectStrategy() {
+        return redirectStrategy;
     }
 
     @Override
@@ -34,8 +49,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         EmployeeRequest employeeRequest = new EmployeeRequest(email,name,profilePic);
         employeeService.createEmployeeFromGoogleAuth(employeeRequest);
 
-        response.setContentType("text/html");
-        response.getWriter().println("<html><head><script>window.opener.location.href = 'http://127.0.0.1:5500/'; window.close();</script></head></html>");
-        response.getWriter().flush();
+        String targetUrl = "http://127.0.0.1:5500/#/";
+        redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 }

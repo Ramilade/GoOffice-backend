@@ -30,6 +30,8 @@ public class LoginService {
             Employee employee = employeeRepository.findByEmail(email);
             if (employee != null) {
                 response.put("email", email);
+                response.put("name", employee.getName());
+                response.put("profilePic", employee.getProfilePic());
                 return ResponseEntity.ok(response);
             } else {
                 response.put("message", "User not found. Please contact admin.");
