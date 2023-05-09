@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.util.List;
@@ -33,7 +32,6 @@ public class SecurityConfig {
                 })
                 .oauth2Login(oauth2Login -> oauth2Login
                         .loginProcessingUrl("/login/oauth2/code/*") // Add this line
-                        .defaultSuccessUrl("http://127.0.0.1:5500", true)
                         .successHandler(new CustomAuthenticationSuccessHandler(employeeService))) // Use the custom success handler
                 .logout(logout -> logout
                         .logoutSuccessHandler((request, response, authentication) -> {
