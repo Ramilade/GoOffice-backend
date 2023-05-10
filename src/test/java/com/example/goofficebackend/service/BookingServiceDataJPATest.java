@@ -70,8 +70,8 @@ public class BookingServiceDataJPATest {
     }
 
     private void createDesk() {
-    /*    Desk desk = new Desk();
-        deskRepository.save(desk);*/
+        Desk desk = new Desk();
+        deskRepository.save(desk);
     }
 
     @Test
@@ -123,9 +123,11 @@ public class BookingServiceDataJPATest {
 
     @Test
     public void createBookingWithNoAvailableDeskTest() {
+
         //given
         LocalDateTime shiftStart = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
         LocalDateTime shiftEnd = shiftStart.plusHours(3);
+        Employee testEmployee2 = createTestEmployee2();
 
         BookingRequest bookingRequest = new BookingRequest();
         bookingRequest.setEmployeeId(testEmployee.getId());
@@ -133,12 +135,12 @@ public class BookingServiceDataJPATest {
         bookingRequest.setShiftEnd(shiftEnd);
 
         BookingRequest bookingRequest2 = new BookingRequest();
-        bookingRequest2.setEmployeeId(testEmployee.getId());
+        bookingRequest2.setEmployeeId(testEmployee2.getId());
         bookingRequest2.setShiftStart(shiftStart);
         bookingRequest2.setShiftEnd(shiftEnd);
 
         // when
-        ResponseEntity<BookingResponse> bookingResponseEntity = bookingService.createBooking(bookingRequest);
+        ResponseEntity<BookingResponse> bookingResponseEntity = bookingService.createBooking(bookingRequest2);
 
         // then
         assertThat(bookingResponseEntity.getStatusCodeValue()).isEqualTo(200);
@@ -156,6 +158,7 @@ public class BookingServiceDataJPATest {
     @Test
     public void findBookingsByDateTest() {
         //given
+        Employee testEmployee2 = createTestEmployee2();
 
         LocalDateTime shiftStart = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
         LocalDateTime shiftEnd = shiftStart.plusHours(3);
@@ -167,8 +170,8 @@ public class BookingServiceDataJPATest {
         bookingService.createBooking(bookingRequest1);
 
         BookingRequest bookingRequest2 = new BookingRequest();
-        bookingRequest2.setEmployeeId(testEmployee.getId());
-        bookingRequest2.setShiftStart(shiftStart);
+        bookingRequest2.setEmployeeId(testEmployee2.getId());
+        bookingRequest2.setShiftStart(shiftStart.plusHours(3));
         bookingRequest2.setShiftEnd(shiftEnd);
         bookingService.createBooking(bookingRequest2);
 
@@ -182,12 +185,12 @@ public class BookingServiceDataJPATest {
 
     @Test
     void findAvailableDesksByDate() {
+        Employee testEmployee2 = createTestEmployee2();
         //given
         Desk desk1 = new Desk();
         deskRepository.save(desk1);
         Desk desk2 = new Desk();
         deskRepository.save(desk2);
-        Employee testEmployee2 = createTestEmployee2();
         LocalDateTime shiftStart1 = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
         LocalDateTime shiftEnd1 = shiftStart1.plusHours(3);
 
@@ -219,8 +222,8 @@ public class BookingServiceDataJPATest {
         ResponseEntity<List<Integer>> availableDesks = bookingService.findAvailableDesksByDate(date);
 
         //then
-        assertEquals(1, availableDesks.getBody().get(0));
-        assertEquals(0, availableDesks.getBody().get(1));
+        assertEquals(2, availableDesks.getBody().get(0));
+        assertEquals(1, availableDesks.getBody().get(1));
     }
 
 
