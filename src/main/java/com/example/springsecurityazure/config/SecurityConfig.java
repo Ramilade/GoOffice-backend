@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.List;
 
@@ -27,8 +28,9 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests(auth -> {
-                    auth.requestMatchers(req -> req.getRequestURI().equals("/") || req.getRequestURI().equals("/auth-status") || req.getRequestURI().startsWith("/oauth2/authorization/")).permitAll();
-                    auth.anyRequest().authenticated();
+                    auth
+                            .requestMatchers(req -> req.getRequestURI().equals("/") || req.getRequestURI().equals("/auth-status") || req.getRequestURI().startsWith("/oauth2/authorization/")).permitAll()
+                            .requestMatchers(req -> req.getRequestURI().startsWith("/api/")).authenticated(); // Add this line to allow authenticated users to access /api endpoints
                 })
                 .oauth2Login(oauth2Login -> oauth2Login
                         .loginProcessingUrl("/login/oauth2/code/*") // Add this line
@@ -42,6 +44,7 @@ public class SecurityConfig {
                             sessionCookie.setHttpOnly(true);
                             sessionCookie.setSecure(true);
                             response.addCookie(sessionCookie);
+                            response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
                             response.setStatus(HttpStatus.OK.value());
                             response.setHeader("Location", "https://accounts.google.com/Logout?&continue=http://127.0.0.1:5500");
                         })
@@ -49,17 +52,22 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(request -> "/logout".equals(request.getRequestURI()))) // Disable CSRF protection for /logout endpoint
+                        .ignoringRequestMatchers(
+                                new AntPathRequestMatcher("/api/**"), // Add this line to disable CSRF protection for /api endpoints
+                                new AntPathRequestMatcher("/logout") // Disable CSRF protection for /logout endpoint
+                        )
+                )
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
                             corsConfiguration.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
                             corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
                             corsConfiguration.setAllowCredentials(true);
+                            corsConfiguration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
                             corsConfiguration.setExposedHeaders(List.of("Set-Cookie"));
 
                             return corsConfiguration;
-                        })) // Enable CORS
+                        }))
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .maximumSessions(1)

@@ -61,7 +61,6 @@ public class BookingService {
 
     public ResponseEntity<BookingResponse> createBooking(BookingRequest br) {
 
-
         Employee employee = employeeRepository.findById(br.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
 
         Booking booking = new Booking();
