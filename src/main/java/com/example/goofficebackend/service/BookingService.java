@@ -17,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,4 +122,22 @@ public class BookingService {
     List<BookingResponse> bookingResponses = list.stream().map(BookingResponse::new).toList();
     return ResponseEntity.ok().body(bookingResponses);
   }
+
+  public ResponseEntity<List<Integer>> findAvailableDesksByDate(LocalDate date) {
+    LocalDateTime startOfMorning = LocalDateTime.of(date, LocalTime.of(8, 0));
+    LocalDateTime endOfMorning = LocalDateTime.of(date, LocalTime.of(12, 0));
+    LocalDateTime startOfAfternoon = LocalDateTime.of(date, LocalTime.of(13, 0));
+    LocalDateTime endOfAfternoon = LocalDateTime.of(date, LocalTime.of(17, 0));
+
+    List<Booking> morningBookings = bookingRepository.findByShiftStartBetweenOrShiftEndBetween(startOfMorning, endOfMorning, startOfMorning, endOfMorning);
+    int availableDesksInMorning = deskRepository.findAll().size() - morningBookings.size();
+
+    List<Booking> afternoonBookings = bookingRepository.findByShiftStartBetweenOrShiftEndBetween(startOfAfternoon, endOfAfternoon, startOfAfternoon, endOfAfternoon);
+    int availableDesksInAfternoon = deskRepository.findAll().size() - afternoonBookings.size();
+
+    return ResponseEntity.ok(Arrays.asList(availableDesksInMorning, availableDesksInAfternoon));
+  }
+
+
+
 }

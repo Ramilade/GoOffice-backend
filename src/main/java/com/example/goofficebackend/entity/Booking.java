@@ -49,4 +49,17 @@ public class Booking {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "employee_id")
   private Employee employee;
+
+  @Override
+  public String toString() {
+    return "Booking{" +
+            "id=" + id +
+            ", shiftStart=" + shiftStart +
+            ", shiftEnd=" + shiftEnd +
+            ", created=" + created +
+            ", updated=" + updated +
+            ", desk=" + desk +
+            ", employee=" + employee +
+            '}';
+  }
 }
