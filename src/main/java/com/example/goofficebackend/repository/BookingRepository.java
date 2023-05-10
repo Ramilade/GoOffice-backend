@@ -19,4 +19,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
   @Query(value = "SELECT * FROM booking WHERE CAST(shift_start AS DATE) = CAST(:date AS DATE) AND employee_id = :employeeId", nativeQuery = true)
   List<Booking> findBookingsByShiftStartAndEmployee_Id(@Param("date") LocalDateTime shiftStart,@Param("employeeId") int employee_id);
 
+  List<Booking> findByShiftStartBetweenOrShiftEndBetween(LocalDateTime startOfDay, LocalDateTime endOfDay, LocalDateTime startOfDay1, LocalDateTime endOfDay1);
 }

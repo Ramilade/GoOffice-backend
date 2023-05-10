@@ -60,9 +60,18 @@ public class BookingServiceDataJPATest {
         return employeeRepository.save(employee);
     }
 
+    private Employee createTestEmployee2() {
+        Employee employee = new Employee();
+        employee.setName("Jane Doe");
+        employee.setEmail("jane.doe@example.com");
+        employee.setBirthdate(LocalDate.now().minusYears(25));
+        employee.addRole(Role.ADMIN);
+        return employeeRepository.save(employee);
+    }
+
     private void createDesk() {
-        Desk desk = new Desk();
-        deskRepository.save(desk);
+    /*    Desk desk = new Desk();
+        deskRepository.save(desk);*/
     }
 
     @Test
@@ -147,10 +156,6 @@ public class BookingServiceDataJPATest {
     @Test
     public void findBookingsByDateTest() {
         //given
-        Desk desk1 = new Desk();
-        deskRepository.save(desk1);
-        Desk desk2 = new Desk();
-        deskRepository.save(desk2);
 
         LocalDateTime shiftStart = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
         LocalDateTime shiftEnd = shiftStart.plusHours(3);
@@ -174,4 +179,52 @@ public class BookingServiceDataJPATest {
         assertEquals(2,
             bookingResponses.getBody().size());
     }
+
+    @Test
+    void findAvailableDesksByDate() {
+        //given
+        Desk desk1 = new Desk();
+        deskRepository.save(desk1);
+        Desk desk2 = new Desk();
+        deskRepository.save(desk2);
+        Employee testEmployee2 = createTestEmployee2();
+        LocalDateTime shiftStart1 = LocalDateTime.now().plusDays(7).withHour(9).withMinute(0);
+        LocalDateTime shiftEnd1 = shiftStart1.plusHours(3);
+
+        LocalDateTime shiftStart2 = LocalDateTime.now().plusDays(7).withHour(14).withMinute(0);
+        LocalDateTime shiftEnd2 = shiftStart2.plusHours(3);
+
+        BookingRequest bookingRequest1 = new BookingRequest();
+        bookingRequest1.setEmployeeId(testEmployee.getId());
+        bookingRequest1.setShiftStart(shiftStart1);
+        bookingRequest1.setShiftEnd(shiftEnd1);
+        bookingService.createBooking(bookingRequest1);
+
+        BookingRequest bookingRequest2 = new BookingRequest();
+        bookingRequest2.setEmployeeId(testEmployee.getId());
+        bookingRequest2.setShiftStart(shiftStart2);
+        bookingRequest2.setShiftEnd(shiftEnd2);
+        bookingService.createBooking(bookingRequest2);
+
+        BookingRequest bookingRequest3 = new BookingRequest();
+        bookingRequest3.setEmployeeId(testEmployee2.getId());
+        bookingRequest3.setShiftStart(shiftStart2);
+        bookingRequest3.setShiftEnd(shiftEnd2);
+        bookingService.createBooking(bookingRequest3);
+
+
+        LocalDate date = LocalDate.now().plusDays(7);
+
+        //when
+        ResponseEntity<List<Integer>> availableDesks = bookingService.findAvailableDesksByDate(date);
+
+        //then
+        assertEquals(1, availableDesks.getBody().get(0));
+        assertEquals(0, availableDesks.getBody().get(1));
+    }
+
+
+
+
+
 }

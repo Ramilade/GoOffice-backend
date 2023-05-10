@@ -49,4 +49,11 @@ public class Employee extends EmployeeWithRoles {
     this.profilePic = profilePic;
     addRole(Role.USER);
   }
+
+  @Override
+  public String toString() {
+    return "Employee{" +
+            "name='" + name + '\'' +
+            '}';
+  }
 }

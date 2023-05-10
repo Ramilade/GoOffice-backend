@@ -2,14 +2,11 @@ package com.example.goofficebackend.api;
 
 import com.example.goofficebackend.dto.BookingRequest;
 import com.example.goofficebackend.dto.BookingResponse;
-import com.example.goofficebackend.entity.Booking;
 import com.example.goofficebackend.service.BookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @CrossOrigin
@@ -51,6 +48,11 @@ public class BookingController {
     public ResponseEntity<List<BookingResponse>> findBookingsByDate(@PathVariable LocalDate date) {
 
         return bookingService.findBookingsByDate(date);
+    }
+
+    @GetMapping("/findavailable/{date}")
+    public ResponseEntity<List<Integer>> getAvailableDesks(@PathVariable LocalDate date) {
+        return bookingService.findAvailableDesksByDate(date);
     }
 
 }
