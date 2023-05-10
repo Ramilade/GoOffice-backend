@@ -4,7 +4,10 @@ import com.example.goofficebackend.dto.EmployeeRequest;
 import com.example.goofficebackend.dto.EmployeeResponse;
 import com.example.goofficebackend.entity.Employee;
 import com.example.goofficebackend.repository.EmployeeRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +51,15 @@ public class EmployeeService {
             employeeRepository.save(employee);
         }
     }
+
+    public int getEmployeeIdByEmail(Authentication authentication) {
+
+            OAuth2User oauth2User = ((OAuth2AuthenticationToken) authentication).getPrincipal();
+            String email = oauth2User.getAttribute("email");
+
+            Employee employee = employeeRepository.findByEmail(email);
+            return employee.getId();
+        }
+
 
 }
