@@ -32,7 +32,6 @@ public class BookingController {
     public ResponseEntity<BookingResponse> createBooking(@RequestBody BookingRequest bookingRequest) {
 
         return bookingService.createBooking(bookingRequest);
-
     }
 
     @PutMapping("/update/{id}")

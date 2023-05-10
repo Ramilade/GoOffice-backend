@@ -24,89 +24,100 @@ import java.util.stream.Collectors;
 public class BookingService {
 
 
-    private BookingRepository bookingRepository;
-    private DeskRepository deskRepository;
-    private EmployeeRepository employeeRepository;
-    private DepartmentRepository departmentRepository;
+  private BookingRepository bookingRepository;
+  private DeskRepository deskRepository;
+  private EmployeeRepository employeeRepository;
+  private DepartmentRepository departmentRepository;
 
-    public BookingService(BookingRepository bookingRepository, DeskRepository deskRepository, EmployeeRepository employeeRepository) {
-        this.bookingRepository = bookingRepository;
-        this.deskRepository = deskRepository;
-        this.employeeRepository = employeeRepository;
+  public BookingService(BookingRepository bookingRepository, DeskRepository deskRepository, EmployeeRepository employeeRepository) {
+    this.bookingRepository = bookingRepository;
+    this.deskRepository = deskRepository;
+    this.employeeRepository = employeeRepository;
+  }
+
+
+  public ResponseEntity<List<BookingResponse>> getBookings() {
+    List<Booking> bookings = bookingRepository.findAll();
+    List<BookingResponse> bookingResponses = bookings.stream()
+        .map(BookingResponse::new)
+        .collect(Collectors.toList());
+    return ResponseEntity.ok().body(bookingResponses);
+  }
+
+  public void validateDate(LocalDateTime shiftStart, LocalDateTime shiftEnd) {
+    // check that the date is the same
+    if (!shiftStart.toLocalDate().isEqual(shiftEnd.toLocalDate())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start and end date is not the same");
+    }
+    // check if startdate or enddate is not before present
+    if (shiftStart.isBefore(LocalDateTime.now()) || shiftEnd.isBefore(LocalDateTime.now())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is before present");
+    }
+    // check if enddate is more than 4 weeks in the future
+    if (shiftEnd.isAfter(LocalDateTime.now().plusWeeks(4))) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is more than 4 weeks in the future");
+    }
+  }
+
+  public ResponseEntity<BookingResponse> createBooking(BookingRequest br) {
+
+    Employee employee = employeeRepository.findById(br.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
+
+    if (checkDoubleBooking(br.getShiftStart(), br.getEmployeeId())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already have a booking on that date and time");
     }
 
-    
-    public ResponseEntity<List<BookingResponse>> getBookings() {
-        List<Booking> bookings = bookingRepository.findAll();
-        List<BookingResponse> bookingResponses = bookings.stream()
-                .map(BookingResponse::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok().body(bookingResponses);
+
+    Booking booking = new Booking();
+
+    Desk availableDesk = deskRepository.findAvailableDesk(br.getShiftStart(), br.getShiftEnd())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
+
+    validateDate(br.getShiftStart(), br.getShiftEnd());
+
+    booking.setShiftStart(br.getShiftStart());
+    booking.setShiftEnd(br.getShiftEnd());
+    booking.setEmployee(employee);
+    booking.setDesk(availableDesk);
+
+    bookingRepository.save(booking);
+    BookingResponse bookingResponse = new BookingResponse(booking);
+    return ResponseEntity.ok().body(bookingResponse);
+  }
+
+    private boolean checkDoubleBooking(LocalDateTime shiftStart, int employeeId) {
+        List<Booking> bookings = bookingRepository.findBookingsByShiftStartAndEmployee_Id(shiftStart, employeeId);
+        return bookings.stream().anyMatch(booking -> booking.getShiftStart().equals(shiftStart));
     }
 
-    public void validateDate(LocalDateTime shiftStart, LocalDateTime shiftEnd) {
-        // check that the date is the same
-        if (!shiftStart.toLocalDate().isEqual(shiftEnd.toLocalDate())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start and end date is not the same");
-        }
-        // check if startdate or enddate is not before present
-        if (shiftStart.isBefore(LocalDateTime.now()) || shiftEnd.isBefore(LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is before present");
-        }
-        // check if enddate is more than 4 weeks in the future
-        if (shiftEnd.isAfter(LocalDateTime.now().plusWeeks(4))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is more than 4 weeks in the future");
-        }
-    }
-
-    public ResponseEntity<BookingResponse> createBooking(BookingRequest br) {
-
-        Employee employee = employeeRepository.findById(br.getEmployeeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No employee with this ID"));
-
-        Booking booking = new Booking();
-
-        Desk availableDesk = deskRepository.findAvailableDesk(br.getShiftStart(), br.getShiftEnd())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
-
-        validateDate(br.getShiftStart(), br.getShiftEnd());
-
-        booking.setShiftStart(br.getShiftStart());
-        booking.setShiftEnd(br.getShiftEnd());
-        booking.setEmployee(employee);
-        booking.setDesk(availableDesk);
-
-        bookingRepository.save(booking);
-        BookingResponse bookingResponse = new BookingResponse(booking);
-        return ResponseEntity.ok().body(bookingResponse);
-    }
 
     public ResponseEntity<BookingResponse> updateBooking(int id, BookingRequest br) {
 
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No booking with this ID"));
+    Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No booking with this ID"));
 
-        Desk availableDesk = deskRepository.findAvailableDesk(br.getShiftStart(), br.getShiftEnd())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
+    Desk availableDesk = deskRepository.findAvailableDesk(br.getShiftStart(), br.getShiftEnd())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No available desk during the specified time period"));
 
-        validateDate(br.getShiftStart(), br.getShiftEnd());
+    validateDate(br.getShiftStart(), br.getShiftEnd());
 
-        booking.setShiftStart(br.getShiftStart());
-        booking.setShiftEnd(br.getShiftEnd());
-        booking.setDesk(availableDesk);
+    booking.setShiftStart(br.getShiftStart());
+    booking.setShiftEnd(br.getShiftEnd());
+    booking.setDesk(availableDesk);
 
-        bookingRepository.save(booking);
-        BookingResponse bookingResponse = new BookingResponse(booking);
-        return ResponseEntity.ok().body(bookingResponse);
-    }
+    bookingRepository.save(booking);
+    BookingResponse bookingResponse = new BookingResponse(booking);
+    return ResponseEntity.ok().body(bookingResponse);
+  }
 
-    public ResponseEntity<String> deleteBooking(int id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No booking with this ID"));
-        bookingRepository.delete(booking);
-        return ResponseEntity.ok().body("Booking deleted");
-    }
+  public ResponseEntity<String> deleteBooking(int id) {
+    Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No booking with this ID"));
+    bookingRepository.delete(booking);
+    return ResponseEntity.ok().body("Booking deleted");
+  }
 
-    public ResponseEntity<List<BookingResponse>> findBookingsByDate(LocalDate date) {
-        List <Booking> list = bookingRepository.findBookingsByDate(date);
-        List <BookingResponse> bookingResponses = list.stream().map(BookingResponse::new).toList();
-        return ResponseEntity.ok().body(bookingResponses);
-    }
+  public ResponseEntity<List<BookingResponse>> findBookingsByDate(LocalDate date) {
+    List<Booking> list = bookingRepository.findBookingsByDate(date);
+    List<BookingResponse> bookingResponses = list.stream().map(BookingResponse::new).toList();
+    return ResponseEntity.ok().body(bookingResponses);
+  }
 }
