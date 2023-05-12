@@ -88,7 +88,7 @@ public class BookingService {
     return ResponseEntity.ok().body(bookingResponse);
   }
 
-    private boolean checkDoubleBooking(LocalDateTime shiftStart, int employeeId) {
+    public boolean checkDoubleBooking(LocalDateTime shiftStart, int employeeId) {
         List<Booking> bookings = bookingRepository.findBookingsByShiftStartAndEmployee_Id(shiftStart, employeeId);
         return bookings.stream().anyMatch(booking -> booking.getShiftStart().equals(shiftStart));
     }
