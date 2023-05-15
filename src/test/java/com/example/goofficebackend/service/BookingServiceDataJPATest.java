@@ -224,6 +224,7 @@ public class BookingServiceDataJPATest {
         //then
         assertEquals(2, availableDesks.getBody().get(0));
         assertEquals(1, availableDesks.getBody().get(1));
+        assertEquals(1, availableDesks.getBody().get(1));
     }
 
 
