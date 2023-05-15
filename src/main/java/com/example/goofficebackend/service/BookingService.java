@@ -52,7 +52,8 @@ public class BookingService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start and end date is not the same");
     }
     // check if startdate or enddate is not before present
-    if (shiftStart.isBefore(LocalDateTime.now()) || shiftEnd.isBefore(LocalDateTime.now())) {
+    LocalDate shiftStartDate = shiftStart.toLocalDate();
+    if (shiftStartDate.isBefore(LocalDate.now()) || shiftEnd.isBefore(LocalDateTime.now())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date is before present");
     }
     // check if enddate is more than 4 weeks in the future
@@ -87,7 +88,7 @@ public class BookingService {
     return ResponseEntity.ok().body(bookingResponse);
   }
 
-    private boolean checkDoubleBooking(LocalDateTime shiftStart, int employeeId) {
+    public boolean checkDoubleBooking(LocalDateTime shiftStart, int employeeId) {
         List<Booking> bookings = bookingRepository.findBookingsByShiftStartAndEmployee_Id(shiftStart, employeeId);
         return bookings.stream().anyMatch(booking -> booking.getShiftStart().equals(shiftStart));
     }
