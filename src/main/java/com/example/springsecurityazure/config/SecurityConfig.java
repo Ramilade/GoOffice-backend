@@ -47,7 +47,7 @@ public class SecurityConfig {
 //                            response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
                             response.setHeader("Access-Control-Allow-Origin", "https://thankful-coast-0e5d88710.3.azurestaticapps.net");
                             response.setStatus(HttpStatus.OK.value());
-                            response.setHeader("Location", "https://accounts.google.com/Logout?&continue=http://127.0.0.1:5500");
+                            response.setHeader("Location", "https://accounts.google.com/Logout?&continue=https://thankful-coast-0e5d88710.3.azurestaticapps.net");
                         })
                         .logoutUrl("/logout")
                 )
