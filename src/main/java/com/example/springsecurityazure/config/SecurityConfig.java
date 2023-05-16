@@ -5,6 +5,7 @@ import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,6 +33,7 @@ public class SecurityConfig {
                             .requestMatchers(req -> req.getRequestURI().equals("/") || req.getRequestURI().equals("/auth-status") || req.getRequestURI().startsWith("/oauth2/authorization/")).permitAll()
                             .requestMatchers(req -> req.getRequestURI().startsWith("/api/")).authenticated(); // Add this line to allow authenticated users to access /api endpoints
                 })
+//                .formLogin(Customizer.withDefaults())
                 .oauth2Login(oauth2Login -> oauth2Login
                         .loginProcessingUrl("/login/oauth2/code/*") // Add this line
                         .successHandler(new CustomAuthenticationSuccessHandler(employeeService))) // Use the custom success handler
