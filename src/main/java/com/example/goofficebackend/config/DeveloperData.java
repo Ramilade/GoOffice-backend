@@ -43,7 +43,6 @@ public class DeveloperData implements ApplicationRunner {
         employeeRepository.save(employee1);
 */
 
-
         List<Department> departmentList = createDepartments();
         List<Desk> deskList = createDesks(departmentList);
         createBooking();
