@@ -47,9 +47,9 @@ public class SecurityConfig {
                             sessionCookie.setSecure(true);
                             response.addCookie(sessionCookie);
 //                            response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
-                            response.setHeader("Access-Control-Allow-Origin", "https://thankful-coast-0e5d88710.3.azurestaticapps.net");
+                            response.setHeader("Access-Control-Allow-Origin", "https://black-glacier-041367803.3.azurestaticapps.net");
                             response.setStatus(HttpStatus.OK.value());
-                            response.setHeader("Location", "https://accounts.google.com/Logout?&continue=https://thankful-coast-0e5d88710.3.azurestaticapps.net");
+                            response.setHeader("Location", "https://accounts.google.com/Logout?&continue=https://black-glacier-041367803.3.azurestaticapps.net");
                         })
                         .logoutUrl("/logout")
                 )
@@ -64,7 +64,7 @@ public class SecurityConfig {
                         .configurationSource(request -> {
                             var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
 //                            corsConfiguration.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
-                            corsConfiguration.setAllowedOrigins(List.of("https://thankful-coast-0e5d88710.3.azurestaticapps.net"));
+                            corsConfiguration.setAllowedOrigins(List.of("https://black-glacier-041367803.3.azurestaticapps.net"));
                             corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
                             corsConfiguration.setAllowCredentials(true);
                             corsConfiguration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
